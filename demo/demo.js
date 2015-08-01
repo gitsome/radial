@@ -76,6 +76,20 @@ var startDemo;
 
         var radial = new Radial(container, shapes, {});
 
+        container.click(function () {
+
+            var transforms = [];
+            transforms.push({type: 'rotateAnimation', configs: {rotation: 360}, delay: Radial.DELAY_BY_INDEX, speed: 800});
+            transforms.push({type: 'whiteAnimation', delay: 0, speed: 500});
+            transforms.push({type: 'shrinkAnimation', delay: 0, speed: 300});
+            transforms.push({type: 'growAnimation', delay: 0, speed: 300});
+            transforms.push({type: 'colorAnimation', delay: Radial.DELAY_BY_INDEX, speed: 300});
+            transforms.push({type: 'arcLengthAnimation', configs: {arcLength: Math.round(Math.random()* 150) + 10 }, delay: Radial.DELAY_BY_INDEX, speed: 500});
+
+            radial.transform(transforms, {});
+
+        });
+
     };
 
 })();

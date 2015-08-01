@@ -12,85 +12,6 @@ var Radial;
     };
 
 
-    /*=========== ANIMATIONS ============*/
-
-    var delayByIndex = function(d, i, allData, speed) {
-        return i * speed/(allData.length * 3);
-    };
-
-    var delayByIndexReverse = function(d, i, allData, speed) {
-        return (allData.length - i) * speed/(allData.length * 2);
-    };
-
-    var rotateAnimation = function (rotation) {
-        return {
-            angle: function (d, i) {
-                return d.angle + rotation;
-            }
-        };
-    };
-
-    var shrinkAnimation = function () {
-        return {
-            inner: function(d, i){return d.inner / 5;},
-            outer: function(d, i){return d.outer * 0.85;},
-            angle: function(d, i){return d.angle - 25;}
-        };
-    };
-
-    var growAnimation = function (originalShapes) {
-        return {
-            inner: function (d, i) {return originalShapes[i].inner},
-            outer: function (d, i) {return originalShapes[i].outer},
-            angle: function(d, i){return d.angle + 25;}
-        };
-    };
-
-    var closeAnimation = function () {
-        return {
-            inner: 0,
-            outer: function(d, i){return d.outer;}
-        };
-    };
-
-    var openAnimation = function () {
-        return {
-            inner: InnerRadius,
-            outer: Radius
-        };
-    };
-
-    var grayAnimation = function () {
-        return {
-            color: '#eeeeee',
-            stroke: '#aaaaaa',
-            strokeWidth: 1
-        };
-    };
-
-    var whiteAnimation = function () {
-        return {
-            color: '#fff',
-            stroke: '#fff',
-            strokeWidth: 0
-        };
-    };
-
-    var colorAnimation = function (originalShapes) {
-        return {
-            color: function(d, i) {return originalShapes[i].color;},
-            strokeWidth: 0
-        };
-    };
-
-    var arcLengthAnimation = function (arcLength) {
-        return {
-            arcLength: arcLength
-        };
-    };
-
-
-
     /*============ CLASS DEFINITION ============*/
 
     var options_default = {
@@ -98,11 +19,6 @@ var Radial;
         click: {},
         onHover: $.noop,
         onClick: $.noop
-    };
-    var transformOptions_default = {
-        speed: 0,
-        delay: 0,
-        onComplete: $.noop
     };
 
     Radial = function (container, shapes, options_in) {
@@ -118,27 +34,6 @@ var Radial;
         var animating = false;
         var vis;
         var shapeElems;
-
-        var playLoaderAnimation = function () {
-
-            var spinAnimate = {type: rotateAnimation(360), configs: {delay: delayByIndex, speed: 800}};
-            var whiteAnimate = {type: whiteAnimation(), configs:{speed: 500, delay: 0}};
-            var shrinkAnimate = {type: shrinkAnimation(), configs:{speed: 300, delay: 0}};
-            var growAnimate = {type: growAnimation(shapes), configs:{speed: 300, delay: 0}};
-            var fadeBackAnimation = {type:colorAnimation(shapes), configs:{delay: delayByIndex}};
-
-            var arcAnimate = {type: arcLengthAnimation(Math.round(Math.random()* 150 + 10)), configs:{delay: delayByIndex}}
-
-            transformStack.push(shrinkAnimate);
-            transformStack.push(growAnimate);
-            transformStack.push(whiteAnimate);
-            transformStack.push(spinAnimate);
-            transformStack.push(fadeBackAnimation);
-            transformStack.push(arcAnimate);
-
-            runNextTransform();
-        };
-
 
         var transformStack = [];
         var getCopyOfOriginalShapes = function () {
@@ -339,11 +234,28 @@ var Radial;
 
         /*============ PUBLIC METHODS ============*/
 
-        that.transform = function (transformId, transformOptions_in) {
+        var transformOptions_default = {
+            onComplete: $.noop
+        };
 
+        that.transform = function (transforms, transformOptions_in) {
+
+            var transforms = [].concat(transforms);
             var transformOptions = $.extend({}, transformOptions_default, transformOptions_in, true);
 
+            var lastTransform = transforms[transforms.length -1];
+            var lastTransformOnComplete = lastTransform.onComplete || $.noop;
+            lastTransform.onComplete = function () {
+                lastTransformOnComplete();
+                transformOptions.onComplete();
+            };
 
+            for(var i=0; i < transforms.length; i++) {
+                var transform = {type: Radial.transforms[transforms[i].type](shapes, transforms[i].configs), configs: {delay: transforms[i].delay, speed: transforms[i].speed }}
+                transformStack.push(transform);
+            }
+
+            runNextTransform();
         };
 
         that.resize = function (width, height) {
@@ -370,11 +282,89 @@ var Radial;
         updateRadiusValues(currentShapes);
         draw(currentShapes, {});
 
-
-        container.click(function() {
-            playLoaderAnimation();
-        });
-
     };
+
+
+    /*============ STATIC METHODS ============*/
+
+    Radial.DELAY_BY_INDEX = function(d, i, allData, speed) {
+        return i * speed/(allData.length * 3);
+    };
+
+    Radial.DELAY_BY_INDEX_REVERSE = function(d, i, allData, speed) {
+        return (allData.length - i) * speed/(allData.length * 2);
+    };
+
+    Radial.transforms = {
+
+        rotateAnimation: function (originalShapes, configs) {
+            return {
+                angle: function (d, i) {
+                    return d.angle + configs.rotation;
+                }
+            };
+        },
+
+        shrinkAnimation: function (originalShapes) {
+            return {
+                inner: function(d, i){return d.inner / 5;},
+                outer: function(d, i){return d.outer * 0.85;},
+                angle: function(d, i){return d.angle - 25;}
+            };
+        },
+
+        growAnimation: function (originalShapes) {
+            return {
+                inner: function (d, i) {return originalShapes[i].inner},
+                outer: function (d, i) {return originalShapes[i].outer},
+                angle: function(d, i){return d.angle + 25;}
+            };
+        },
+
+        closeAnimation: function () {
+            return {
+                inner: 0,
+                outer: function(d, i){return d.outer;}
+            };
+        },
+
+        openAnimation: function () {
+            return {
+                inner: InnerRadius,
+                outer: Radius
+            };
+        },
+
+        grayAnimation:  function () {
+            return {
+                color: '#eeeeee',
+                stroke: '#aaaaaa',
+                strokeWidth: 1
+            };
+        },
+
+        whiteAnimation: function () {
+            return {
+                color: '#fff',
+                stroke: '#fff',
+                strokeWidth: 0
+            };
+        },
+
+        colorAnimation: function (originalShapes) {
+            return {
+                color: function(d, i) {return originalShapes[i].color;},
+                stroke: function(d, i) {return originalShapes[i].stroke;},
+                strokeWidth: 0
+            };
+        },
+
+        arcLengthAnimation: function (originalShapes, configs) {
+            return {
+                arcLength: configs.arcLength
+            };
+        }
+    };
+
 
 })();

@@ -70,6 +70,7 @@ var Radial;
 
         var transformFieldsMap = {
             'color': 'style',
+            'opacity': 'style',
             'stroke': 'style',
             'strokeWidth': 'style',
             'inner': 'path',
@@ -78,7 +79,9 @@ var Radial;
             'arcLength': 'path'
         };
 
-        var getTransformedData = function (shapeData, transformFields) {
+        var getTransformedData = function (shapeData, transform) {
+
+            var transformFields = transform.type;
 
             var shapeDataNew = [];
 
@@ -87,18 +90,24 @@ var Radial;
                 var shapei = $.extend({}, shapeData[i]);
                 shapei.target = {};
 
-                // now iterate through all fields
-                for(var field in transformFields) {
-                    if(transformFields.hasOwnProperty(field)){
+                var isPartOfGroup = !transform.configs.groups || transform.configs.groups && shapei.group && transform.configs.groups.indexOf(shapei.group) !== -1;
+                var isPartOfShapes = !transform.configs.shapes || transform.configs.shapes && transform.configs.shapes.indexOf(shapei.id) !== -1;
 
-                        var transformType = transformFieldsMap[field];
-                        var newValue = transformFields[field];
-                        var newValueCalculated = typeof(newValue) === "function" ? newValue(shapei, i) : newValue;
+                // check if this one is allowed
+                if(isPartOfGroup && isPartOfShapes) {
+                    // now iterate through all fields
+                    for(var field in transformFields) {
+                        if(transformFields.hasOwnProperty(field)){
 
-                        if(transformType === "style") {
-                            shapei[field] = newValueCalculated;
-                        } else if (transformType === "path") {
-                            shapei.target[field] = newValueCalculated;
+                            var transformType = transformFieldsMap[field];
+                            var newValue = transformFields[field];
+                            var newValueCalculated = typeof(newValue) === "function" ? newValue(shapei, i) : newValue;
+
+                            if(transformType === "style") {
+                                shapei[field] = newValueCalculated;
+                            } else if (transformType === "path") {
+                                shapei.target[field] = newValueCalculated;
+                            }
                         }
                     }
                 }
@@ -127,7 +136,7 @@ var Radial;
             if(transformStack.length > 0) {
 
                 var nextTransform = transformStack.shift();
-                currentShapes = getTransformedData(currentShapes, nextTransform.type);
+                currentShapes = getTransformedData(currentShapes, nextTransform);
                 draw(currentShapes, nextTransform.configs);
 
                 // here is where repeat logic would go
@@ -172,6 +181,7 @@ var Radial;
                     .attr("class", "shape")
                     .append("path")
                         .style("fill", function(d) { return d.color; })
+                        .style("opacity", function(d) { return d.opacity === undefined ? 1.0 : d.opacity; })
                         .style("stroke", function(d) { return d.stroke; })
                         .style("stroke-width", function(d) { return d.strokeWidth; })
                         .attr("d", function (d) {return d.path(d);})
@@ -205,6 +215,7 @@ var Radial;
 
                     // style attributes
                     .style("fill", function(d) { return d.color; })
+                    .style("opacity", function(d) { return d.opacity === undefined ? 1.0 : d.opacity; })
                     .style("stroke", function(d) { return d.stroke; })
                     .style("stroke-width", function(d) { return d.strokeWidth; })
 
@@ -251,8 +262,15 @@ var Radial;
             };
 
             for(var i=0; i < transforms.length; i++) {
-                var transform = {type: Radial.transforms[transforms[i].type](shapes, transforms[i].configs), configs: {delay: transforms[i].delay, speed: transforms[i].speed }}
-                transformStack.push(transform);
+                transformStack.push({
+                    type: Radial.transforms[transforms[i].type](shapes, transforms[i].configs),
+                    configs: {
+                        delay: transforms[i].delay,
+                        speed: transforms[i].speed,
+                        shapes: transforms[i].shapes,
+                        groups: transforms[i].groups
+                    }
+                });
             }
 
             runNextTransform();
@@ -275,8 +293,6 @@ var Radial;
         vis = d3.select($(container).find('svg')[0]);
         shapeElems = vis.selectAll(".shape");
 
-        // apply options
-
         // draw
         setDrawingDimensions();
         updateRadiusValues(currentShapes);
@@ -297,7 +313,53 @@ var Radial;
 
     Radial.transforms = {
 
-        rotateAnimation: function (originalShapes, configs) {
+        restore: function (originalShapes, configs) {
+            var props = {};
+            if(!configs || configs.angle) {
+                props.angle = function (d, i) {
+                    return originalShapes[i].angle;
+                };
+            }
+            if(!configs || configs.opacity) {
+                props.opacity = function (d, i) {
+                    return originalShapes[i].opacity;
+                };
+            }
+            if(!configs || configs.color) {
+                props.color = function (d, i) {
+                    return originalShapes[i].color;
+                };
+            }
+            if(!configs || configs.inner) {
+                props.inner = function (d, i) {
+                    return originalShapes[i].inner;
+                };
+            }
+            if(!configs || configs.outer) {
+                props.outer = function (d, i) {
+                    return originalShapes[i].outer;
+                };
+            }
+            if(!configs || configs.stroke) {
+                props.stroke = function (d, i) {
+                    return originalShapes[i].stroke;
+                };
+            }
+            if(!configs || configs.strokeWidth) {
+                props.strokeWidth = function (d, i) {
+                    return originalShapes[i].strokeWidth;
+                };
+            }
+            if(!configs || configs.arcLength) {
+                props.arcLength = function (d, i) {
+                    return originalShapes[i].arcLength;
+                };
+            }
+
+            return props;
+        },
+
+        rotate: function (originalShapes, configs) {
             return {
                 angle: function (d, i) {
                     return d.angle + configs.rotation;
@@ -305,7 +367,7 @@ var Radial;
             };
         },
 
-        shrinkAnimation: function (originalShapes) {
+        shrink: function (originalShapes) {
             return {
                 inner: function(d, i){return d.inner / 5;},
                 outer: function(d, i){return d.outer * 0.85;},
@@ -313,7 +375,7 @@ var Radial;
             };
         },
 
-        growAnimation: function (originalShapes) {
+        grow: function (originalShapes) {
             return {
                 inner: function (d, i) {return originalShapes[i].inner},
                 outer: function (d, i) {return originalShapes[i].outer},
@@ -321,29 +383,29 @@ var Radial;
             };
         },
 
-        closeAnimation: function () {
+        close: function () {
             return {
                 inner: 0,
                 outer: function(d, i){return d.outer;}
             };
         },
 
-        openAnimation: function () {
+        open: function () {
             return {
                 inner: InnerRadius,
                 outer: Radius
             };
         },
 
-        grayAnimation:  function () {
+        color: function (originalShapes, configs) {
             return {
-                color: '#eeeeee',
-                stroke: '#aaaaaa',
-                strokeWidth: 1
+                color: configs.color,
+                stroke: configs.color,
+                strokeWidth: 0
             };
         },
 
-        whiteAnimation: function () {
+        white: function () {
             return {
                 color: '#fff',
                 stroke: '#fff',
@@ -351,15 +413,29 @@ var Radial;
             };
         },
 
-        colorAnimation: function (originalShapes) {
+        gray:  function () {
             return {
-                color: function(d, i) {return originalShapes[i].color;},
-                stroke: function(d, i) {return originalShapes[i].stroke;},
+                color: '#eeeeee',
+                stroke: '#aaaaaa',
+                strokeWidth: 1
+            };
+        },
+
+        opacity:  function (originalShapes, configs) {
+            return {
+                opacity: configs.opacity
+            };
+        },
+
+        black: function () {
+            return {
+                color: '#000',
+                stroke: '#000',
                 strokeWidth: 0
             };
         },
 
-        arcLengthAnimation: function (originalShapes, configs) {
+        arcLength: function (originalShapes, configs) {
             return {
                 arcLength: configs.arcLength
             };

@@ -34,6 +34,7 @@ var startDemo;
             },
             {
                 id: 'purple',
+                group: 'cool',
                 path: pizzaSlicePath,
                 color: '#966882',
                 stroke: '#966882',
@@ -44,6 +45,7 @@ var startDemo;
             },
             {
                 id: 'blue',
+                group: 'cool',
                 path: pizzaSlicePath,
                 color: '#00a4af',
                 stroke: '#00a4af',
@@ -54,6 +56,7 @@ var startDemo;
             },
             {
                 id: 'green',
+                group: 'cool',
                 path: pizzaSlicePath,
                 color: '#00c87f',
                 stroke: '#00c87f',
@@ -79,12 +82,14 @@ var startDemo;
         container.click(function () {
 
             var transforms = [];
-            transforms.push({type: 'rotateAnimation', configs: {rotation: 360}, delay: Radial.DELAY_BY_INDEX, speed: 800});
-            transforms.push({type: 'whiteAnimation', delay: 0, speed: 500});
-            transforms.push({type: 'shrinkAnimation', delay: 0, speed: 300});
-            transforms.push({type: 'growAnimation', delay: 0, speed: 300});
-            transforms.push({type: 'colorAnimation', delay: Radial.DELAY_BY_INDEX, speed: 300});
-            transforms.push({type: 'arcLengthAnimation', configs: {arcLength: Math.round(Math.random()* 150) + 10 }, delay: Radial.DELAY_BY_INDEX, speed: 500});
+            transforms.push({type: 'white', shapes: ['red'], delay: 0, speed: 500});
+            transforms.push({type: 'rotate', groups: ['cool'], configs: {rotation: 360}, delay: Radial.DELAY_BY_INDEX, speed: 800});
+            transforms.push({type: 'shrink', delay: 0, speed: 300});
+            transforms.push({type: 'grow', delay: 0, speed: 300});
+            transforms.push({type: 'restore', delay: Radial.DELAY_BY_INDEX, speed: 300, configs: {color: true, stroke: true}});
+            transforms.push({type: 'arcLength', configs: {arcLength: Math.round(Math.random()* 150) + 10 }, delay: Radial.DELAY_BY_INDEX, speed: 500});
+            transforms.push({type: 'opacity', configs: {opacity: 0 }, delay: Radial.DELAY_BY_INDEX, speed: 500});
+            transforms.push({type: 'opacity', configs: {opacity: 1.0 }, delay: Radial.DELAY_BY_INDEX, speed: 200});
 
             radial.transform(transforms, {});
 

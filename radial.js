@@ -161,11 +161,11 @@ var Radial;
 
                 clearTargetData(currentShapes);
 
-                for(var i=0; i <  nextTransform.length; i++) {
-                    currentShapes = getTransformedData(currentShapes, nextTransform[i]);
+                for(var i=0; i <  nextTransform.stack.length; i++) {
+                    currentShapes = getTransformedData(currentShapes, nextTransform.stack[i]);
                 }
 
-                draw(currentShapes, nextTransform.configs);
+                draw(currentShapes, {speed: nextTransform.speed, delay: nextTransform.delay});
 
                 // here is where repeat logic would go
             }
@@ -290,6 +290,7 @@ var Radial;
 
             var lastTransform = transformPlaylist[transformPlaylist.length -1];
             var lastTransformOnComplete = lastTransform.onComplete || $.noop;
+
             lastTransform.onComplete = function () {
                 lastTransformOnComplete();
                 transformOptions.onComplete();
@@ -304,15 +305,13 @@ var Radial;
                     stack.push({
                         type: Radial.transforms[transformPlaylist[i].transforms[j].type](shapes, transformPlaylist[i].transforms[j].configs),
                         configs: {
-                            delay: transformPlaylist[i].delay,
-                            speed: transformPlaylist[i].speed,
                             shapes: transformPlaylist[i].transforms[j].shapes,
                             groups: transformPlaylist[i].transforms[j].groups
                         }
                     });
                 }
 
-                transformStack.push(stack);
+                transformStack.push({stack: stack, configs: transformOptions, speed: transformPlaylist[i].speed, delay: transformPlaylist[i].delay});
             }
 
             runNextTransform();

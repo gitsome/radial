@@ -120,7 +120,6 @@ var startDemo;
                         groups: ['cool'],
                         configs: {
                             custom: function () {
-                                console.log('custom:', arguments);
                                 return {};
                             }
                         }
@@ -140,7 +139,7 @@ var startDemo;
 
             transformPlaylist.push({
                 transforms:[
-                    {type: 'restore', configs: {inner:true, outer: true}}
+                    {type: 'restore', configs: {inner:true, outer: true, arcLength:true}}
                 ],
                 delay: 0,
                 speed: 300
@@ -149,13 +148,13 @@ var startDemo;
             transformPlaylist.push({
                 transforms:[{type: 'shrink'}],
                 delay: 0,
-                speed: 300
+                speed: 200
             });
 
             transformPlaylist.push({
                 transforms:[{type: 'grow'}],
                 delay: 0,
-                speed: 300
+                speed: 100
             });
 
             transformPlaylist.push({
@@ -163,7 +162,7 @@ var startDemo;
                     {type: 'restore', configs: {color: true, stroke: true}}
                 ],
                 delay: Radial.DELAY_BY_INDEX,
-                speed: 300,
+                speed: 100,
             });
 
             transformPlaylist.push({
@@ -178,14 +177,14 @@ var startDemo;
                 transforms:[
                     {type: 'opacity', configs: {opacity: 0 }}
                 ],
-                speed: 200
+                speed: 400
             });
 
             transformPlaylist.push({
                 transforms:[
                     {type: 'opacity', configs: {opacity: 1.0 }}
                 ],
-                speed: 100
+                speed: 400
             });
 
             transformPlaylist.push({
@@ -193,7 +192,7 @@ var startDemo;
                     {type: 'restore'}
                 ],
                 delay: Radial.DELAY_BY_INDEX,
-                speed: 300
+                speed: 900
             });
 
             radial.transform(transformPlaylist, {});

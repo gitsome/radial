@@ -14,6 +14,7 @@ var startDemo;
         var shapes = [
             {
                 id: 'orange',
+                group: 'warm',
                 path: pizzaSlicePath,
                 color: '#f39136',
                 stroke: '#f39136',
@@ -24,6 +25,7 @@ var startDemo;
             },
             {
                 id: 'red',
+                group: 'warm',
                 path: pizzaSlicePath,
                 color: '#e5483b',
                 stroke: '#e5483b',
@@ -67,6 +69,7 @@ var startDemo;
             },
             {
                 id: 'yellow',
+                group: 'warm',
                 path: pizzaSlicePath,
                 color: '#c7d643',
                 stroke: '#c7d643',
@@ -81,17 +84,109 @@ var startDemo;
 
         container.click(function () {
 
-            var transforms = [];
-            transforms.push({type: 'white', shapes: ['red'], delay: 0, speed: 500});
-            transforms.push({type: 'rotate', groups: ['cool'], configs: {rotation: 360}, delay: Radial.DELAY_BY_INDEX, speed: 800});
-            transforms.push({type: 'shrink', delay: 0, speed: 300});
-            transforms.push({type: 'grow', delay: 0, speed: 300});
-            transforms.push({type: 'restore', delay: Radial.DELAY_BY_INDEX, speed: 300, configs: {color: true, stroke: true}});
-            transforms.push({type: 'arcLength', configs: {arcLength: Math.round(Math.random()* 150) + 10 }, delay: Radial.DELAY_BY_INDEX, speed: 500});
-            transforms.push({type: 'opacity', configs: {opacity: 0 }, delay: Radial.DELAY_BY_INDEX, speed: 500});
-            transforms.push({type: 'opacity', configs: {opacity: 1.0 }, delay: Radial.DELAY_BY_INDEX, speed: 200});
+            var transformPlaylist = [];
 
-            radial.transform(transforms, {});
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'white', shapes: ['red']}
+                ],
+                delay: 0,
+                speed: 300
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'restore', configs: {color: true, stroke: true}}
+                ],
+                delay: 0,
+                speed: 300
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'rotate', configs: {rotation: 360}}
+                ],
+                delay: Radial.DELAY_BY_INDEX,
+                speed: 800
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'innerHalf', groups: ['cool']},
+                    {type: 'outerHalf', groups: ['warm']},
+                    {type: 'arcLength', configs: {arcLength: 120}}
+                ],
+                speed: 800
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'rotate', groups: ['cool'], configs: {rotation: -360}},
+                    {type: 'rotate', groups: ['warm'], configs: {rotation: 360}}
+                ],
+                delay: Radial.DELAY_BY_INDEX,
+                speed: 800
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'restore', configs: {inner:true, outer: true}}
+                ],
+                delay: 0,
+                speed: 300
+            });
+
+            transformPlaylist.push({
+                transforms:[{type: 'shrink'}],
+                delay: 0,
+                speed: 300
+            });
+
+            transformPlaylist.push({
+                transforms:[{type: 'grow'}],
+                delay: 0,
+                speed: 300
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'restore', configs: {color: true, stroke: true}}
+                ],
+                delay: Radial.DELAY_BY_INDEX,
+                speed: 300,
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'arcLength', configs: {arcLength: Math.round(Math.random()* 150) + 10 }}
+                ],
+                delay: Radial.DELAY_BY_INDEX,
+                speed: 500
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'opacity', configs: {opacity: 0 }}
+                ],
+                speed: 200
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'opacity', configs: {opacity: 1.0 }}
+                ],
+                speed: 100
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'restore'}
+                ],
+                delay: Radial.DELAY_BY_INDEX,
+                speed: 300
+            });
+
+            radial.transform(transformPlaylist, {});
 
         });
 

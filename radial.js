@@ -35,6 +35,8 @@ var Radial;
         var vis;
         var shapeElems;
 
+        var firstDraw = true;
+
         var transformStack = [];
         var getCopyOfOriginalShapes = function () {
             return copyArray(shapes);
@@ -79,6 +81,12 @@ var Radial;
             'arcLength': 'path'
         };
 
+        var clearTargetData = function (shapeData) {
+            for(var i=0; i < shapeData.length; i++) {
+                shapeData[i].target = {};
+            }
+        };
+
         var getTransformedData = function (shapeData, transform) {
 
             var transformFields = transform.type;
@@ -88,13 +96,13 @@ var Radial;
             for(var i=0; i < shapeData.length; i++) {
 
                 var shapei = $.extend({}, shapeData[i]);
-                shapei.target = {};
 
                 var isPartOfGroup = !transform.configs.groups || transform.configs.groups && shapei.group && transform.configs.groups.indexOf(shapei.group) !== -1;
                 var isPartOfShapes = !transform.configs.shapes || transform.configs.shapes && transform.configs.shapes.indexOf(shapei.id) !== -1;
 
                 // check if this one is allowed
                 if(isPartOfGroup && isPartOfShapes) {
+
                     // now iterate through all fields
                     for(var field in transformFields) {
                         if(transformFields.hasOwnProperty(field)){
@@ -130,13 +138,31 @@ var Radial;
             }
         };
 
+        var normalizeAngle = function (angle) {
+            while (angle < 0) angle = angle + 360;
+            while (angle >= 360) angle = angle - 360;
+            return angle;
+        };
+
+        var normalizeAngleValues = function (shapeData) {
+            for(var i=0; i < shapeData.length; i++) {
+                shapeData[i].angle = normalizeAngle(shapeData[i].angle);
+            }
+        };
+
         var runNextTransform = function () {
             if(animating) return;
 
             if(transformStack.length > 0) {
 
                 var nextTransform = transformStack.shift();
-                currentShapes = getTransformedData(currentShapes, nextTransform);
+
+                clearTargetData(currentShapes);
+
+                for(var i=0; i <  nextTransform.length; i++) {
+                    currentShapes = getTransformedData(currentShapes, nextTransform[i]);
+                }
+
                 draw(currentShapes, nextTransform.configs);
 
                 // here is where repeat logic would go
@@ -146,6 +172,7 @@ var Radial;
         var transformComplete = function () {
             animating = false;
             mergeTargetValues(currentShapes);
+            normalizeAngleValues(currentShapes);
             runNextTransform();
         };
 
@@ -165,8 +192,13 @@ var Radial;
 
             /*============ SVG UPDATE ============*/
 
-            vis.transition().duration(transformConfigs.speed)
-                .attr('height', options.h).attr('width', options.w);
+            if(firstDraw) {
+                vis.attr('height', options.h).attr('width', options.w);
+                firstDraw = false;
+            } else {
+                vis.transition().duration(transformConfigs.speed)
+                    .attr('height', options.h).attr('width', options.w);
+            }
 
 
             /*============ SHAPES ============*/
@@ -249,28 +281,36 @@ var Radial;
             onComplete: $.noop
         };
 
-        that.transform = function (transforms, transformOptions_in) {
+        that.transform = function (transformPlaylist, transformOptions_in) {
 
-            var transforms = [].concat(transforms);
+            var transformPlaylist = [].concat(transformPlaylist);
             var transformOptions = $.extend({}, transformOptions_default, transformOptions_in, true);
 
-            var lastTransform = transforms[transforms.length -1];
+            var lastTransform = transformPlaylist[transformPlaylist.length -1];
             var lastTransformOnComplete = lastTransform.onComplete || $.noop;
             lastTransform.onComplete = function () {
                 lastTransformOnComplete();
                 transformOptions.onComplete();
             };
 
-            for(var i=0; i < transforms.length; i++) {
-                transformStack.push({
-                    type: Radial.transforms[transforms[i].type](shapes, transforms[i].configs),
-                    configs: {
-                        delay: transforms[i].delay,
-                        speed: transforms[i].speed,
-                        shapes: transforms[i].shapes,
-                        groups: transforms[i].groups
-                    }
-                });
+            for(var i=0; i < transformPlaylist.length; i++) {
+
+                var stack = [];
+
+                for(var j=0; j < transformPlaylist[i].transforms.length; j++) {
+
+                    stack.push({
+                        type: Radial.transforms[transformPlaylist[i].transforms[j].type](shapes, transformPlaylist[i].transforms[j].configs),
+                        configs: {
+                            delay: transformPlaylist[i].delay,
+                            speed: transformPlaylist[i].speed,
+                            shapes: transformPlaylist[i].transforms[j].shapes,
+                            groups: transformPlaylist[i].transforms[j].groups
+                        }
+                    });
+                }
+
+                transformStack.push(stack);
             }
 
             runNextTransform();
@@ -308,6 +348,14 @@ var Radial;
     };
 
     Radial.DELAY_BY_INDEX_REVERSE = function(d, i, allData, speed) {
+        return (d._group_length - d._group_index) * speed/(d._group_length.length * 2);
+    };
+
+    Radial.DELAY_BY_GROUP_INDEX = function(d, i, allData, speed) {
+        return (d._group_length - d._group_index) * speed/(d._group_length.length * 2);
+    };
+
+    Radial.DELAY_BY_GROUP_INDEX_REVERSE = function(d, i, allData, speed) {
         return (allData.length - i) * speed/(allData.length * 2);
     };
 
@@ -357,6 +405,24 @@ var Radial;
             }
 
             return props;
+        },
+
+        custom: function (originalShapes, configs) {
+            return configs.custom(originalShapes, configs);
+        },
+
+        innerHalf: function (originalShapes, configs) {
+            return {
+                inner: 0.0,
+                outer: 0.5
+            };
+        },
+
+        outerHalf: function (originalShapes, configs) {
+            return {
+                inner: 0.5,
+                outer: 1.0
+            };
         },
 
         rotate: function (originalShapes, configs) {

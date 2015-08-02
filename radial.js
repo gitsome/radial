@@ -92,6 +92,7 @@ var Radial;
             var transformFields = transform.type;
 
             var shapeDataNew = [];
+            var transformGroup = [];
 
             for(var i=0; i < shapeData.length; i++) {
 
@@ -104,25 +105,33 @@ var Radial;
 
                 // check if this one is allowed
                 if(isPartOfGroup || isPartOfShapes ||  noClassification) {
-
-                    // now iterate through all fields
-                    for(var field in transformFields) {
-                        if(transformFields.hasOwnProperty(field)){
-
-                            var transformType = transformFieldsMap[field];
-                            var newValue = transformFields[field];
-                            var newValueCalculated = typeof(newValue) === "function" ? newValue(shapei, i) : newValue;
-
-                            if(transformType === "style") {
-                                shapei[field] = newValueCalculated;
-                            } else if (transformType === "path") {
-                                shapei.target[field] = newValueCalculated;
-                            }
-                        }
-                    }
+                    transformGroup.push(shapei);
                 }
 
                 shapeDataNew.push(shapei);
+            }
+
+            var group_length = transformGroup.length;
+
+            for(var i=0; i < group_length; i++) {
+
+                var shapei = transformGroup[i];
+
+                // now iterate through all fields and apply transforms
+                for(var field in transformFields) {
+                    if(transformFields.hasOwnProperty(field)){
+
+                        var transformType = transformFieldsMap[field];
+                        var newValue = transformFields[field];
+                        var newValueCalculated = typeof(newValue) === "function" ? newValue(shapei, i, group_length) : newValue;
+
+                        if(transformType === "style") {
+                            shapei[field] = newValueCalculated;
+                        } else if (transformType === "path") {
+                            shapei.target[field] = newValueCalculated;
+                        }
+                    }
+                }
             }
 
             // the inner and outer percentages may have changed so update the innerRadius and outerRadius values
@@ -296,22 +305,38 @@ var Radial;
                 transformOptions.onComplete();
             };
 
+            var group, isPartOfGroup, isPartOfShapes, noClassification, transform;
             for(var i=0; i < transformPlaylist.length; i++) {
 
                 var stack = [];
 
                 for(var j=0; j < transformPlaylist[i].transforms.length; j++) {
 
+                    transform = transformPlaylist[i].transforms[j];
+                    group = [];
+
+                    for(var k=0; k < shapes.length; k++) {
+
+                        isPartOfGroup = transform.groups && shapes[k].group && transform.groups.indexOf(shapes[k].group) !== -1;
+                        isPartOfShapes = transform.shapes && transform.shapes.indexOf(shapes[k].id) !== -1;
+
+                        noClassification = !transform.groups && !transform.shapes;
+
+                        if(isPartOfGroup || isPartOfShapes ||  noClassification) {
+                            group.push(shapes[k]);
+                        }
+                    }
+
                     stack.push({
-                        type: Radial.transforms[transformPlaylist[i].transforms[j].type](shapes, transformPlaylist[i].transforms[j].configs),
+                        type: Radial.transforms[transform.type](group, transform.configs, shapes),
                         configs: {
-                            shapes: transformPlaylist[i].transforms[j].shapes,
-                            groups: transformPlaylist[i].transforms[j].groups
+                            shapes: transform.shapes,
+                            groups: transform.groups
                         }
                     });
                 }
 
-                transformStack.push({stack: stack, configs: transformOptions, speed: transformPlaylist[i].speed, delay: transformPlaylist[i].delay});
+                transformStack.push({stack: stack, group: group, configs: transformOptions, speed: transformPlaylist[i].speed, delay: transformPlaylist[i].delay});
             }
 
             runNextTransform();
@@ -487,7 +512,7 @@ var Radial;
         gray:  function () {
             return {
                 color: '#ddd',
-                stroke: '#c6c6c6',
+                stroke: '#d5d5d5',
                 strokeWidth: 1
             };
         },

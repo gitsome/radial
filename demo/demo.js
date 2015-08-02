@@ -91,15 +91,7 @@ var startDemo;
                     {type: 'white'}
                 ],
                 delay: Radial.DELAY_BY_INDEX,
-                speed: 300
-            });
-
-            transformPlaylist.push({
-                transforms:[
-                    {type: 'restore', configs: {color: true, stroke: true}}
-                ],
-                delay: 0,
-                speed: 800
+                speed: 400
             });
 
             transformPlaylist.push({
@@ -107,22 +99,21 @@ var startDemo;
                     {type: 'rotate', configs: {rotation: 360}}
                 ],
                 delay: Radial.DELAY_BY_INDEX,
-                speed: 800
+                speed: 600
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'restore', configs: {color: true, stroke: true}}
+                ],
+                delay: 0,
+                speed: 400
             });
 
             transformPlaylist.push({
                 transforms:[
                     {type: 'innerHalf', groups: ['cool']},
-                    {type: 'outerHalf', groups: ['warm']},
-                    {
-                        type: 'custom',
-                        groups: ['cool'],
-                        configs: {
-                            custom: function () {
-                                return {};
-                            }
-                        }
-                    }
+                    {type: 'outerHalf', groups: ['warm']}
                 ],
                 speed: 600
             });
@@ -130,6 +121,32 @@ var startDemo;
             transformPlaylist.push({
                 transforms:[
                     {type: 'arcLength', configs: {arcLength: 110}},
+                    {
+                        type: 'custom',
+                        groups: ['cool'],
+                        configs: {
+                            custom: function (shapes, configs) {
+                                return {
+                                    angle: function (shape, index, total) {
+                                        return (360 / total) * index;
+                                    }
+                                };
+                            }
+                        }
+                    },
+                    {
+                        type: 'custom',
+                        groups: ['warm'],
+                        configs: {
+                            custom: function (shapes, configs) {
+                                return {
+                                    angle: function (shape, index, total) {
+                                        return (360 / total) * index;
+                                    }
+                                };
+                            }
+                        }
+                    }
                 ],
                 speed: 600
             });
@@ -144,10 +161,18 @@ var startDemo;
 
             transformPlaylist.push({
                 transforms:[
-                    {type: 'restore', configs: {inner:true, outer: true, arcLength:true}}
+                    {type: 'restore', configs: {angle:true, arcLength:true}}
                 ],
                 delay: 0,
                 speed: 300
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'restore', configs: {inner:true, outer: true}}
+                ],
+                delay: 0,
+                speed: 600
             });
 
             transformPlaylist.push({
@@ -255,11 +280,6 @@ var startDemo;
                     {type: 'opacity', configs: {opacity: 1.0 }}
                 ],
                 speed: 250
-            });
-
-            transformPlaylist.push({
-                transforms:[{type: 'pause'}],
-                speed: 900
             });
 
             radial.transform(transformPlaylist, {});

@@ -114,7 +114,17 @@ var startDemo;
                 transforms:[
                     {type: 'innerHalf', groups: ['cool']},
                     {type: 'outerHalf', groups: ['warm']},
-                    {type: 'arcLength', configs: {arcLength: 120}}
+                    {type: 'arcLength', configs: {arcLength: 110}},
+                    {
+                        type: 'custom',
+                        groups: ['cool'],
+                        configs: {
+                            custom: function () {
+                                console.log('custom:', arguments);
+                                return {};
+                            }
+                        }
+                    }
                 ],
                 speed: 800
             });

@@ -97,11 +97,13 @@ var Radial;
 
                 var shapei = $.extend({}, shapeData[i]);
 
-                var isPartOfGroup = !transform.configs.groups || transform.configs.groups && shapei.group && transform.configs.groups.indexOf(shapei.group) !== -1;
-                var isPartOfShapes = !transform.configs.shapes || transform.configs.shapes && transform.configs.shapes.indexOf(shapei.id) !== -1;
+                var isPartOfGroup = transform.configs.groups && shapei.group && transform.configs.groups.indexOf(shapei.group) !== -1;
+                var isPartOfShapes = transform.configs.shapes && transform.configs.shapes.indexOf(shapei.id) !== -1;
+
+                var noClassification = !transform.configs.groups && !transform.configs.shapes;
 
                 // check if this one is allowed
-                if(isPartOfGroup && isPartOfShapes) {
+                if(isPartOfGroup || isPartOfShapes ||  noClassification) {
 
                     // now iterate through all fields
                     for(var field in transformFields) {

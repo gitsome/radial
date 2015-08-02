@@ -482,8 +482,8 @@ var Radial;
 
         gray:  function () {
             return {
-                color: '#eeeeee',
-                stroke: '#aaaaaa',
+                color: '#ddd',
+                stroke: '#c6c6c6',
                 strokeWidth: 1
             };
         },

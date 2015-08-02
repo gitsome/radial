@@ -88,9 +88,9 @@ var startDemo;
 
             transformPlaylist.push({
                 transforms:[
-                    {type: 'white', shapes: ['red', 'green']}
+                    {type: 'white'}
                 ],
-                delay: 0,
+                delay: Radial.DELAY_BY_INDEX,
                 speed: 300
             });
 
@@ -99,7 +99,7 @@ var startDemo;
                     {type: 'restore', configs: {color: true, stroke: true}}
                 ],
                 delay: 0,
-                speed: 300
+                speed: 800
             });
 
             transformPlaylist.push({
@@ -166,6 +166,14 @@ var startDemo;
 
             transformPlaylist.push({
                 transforms:[
+                    {type: 'gray', groups: ['warm']}
+                ],
+                delay: 0,
+                speed: 300
+            });
+
+            transformPlaylist.push({
+                transforms:[
                     {type: 'arcLength', configs: {arcLength: Math.round(Math.random()* 150) + 10 }}
                 ],
                 delay: Radial.DELAY_BY_INDEX,
@@ -174,7 +182,7 @@ var startDemo;
 
             transformPlaylist.push({
                 transforms:[
-                    {type: 'opacity', configs: {opacity: 0.2 }}
+                    {type: 'opacity', configs: {opacity: 0.4 }}
                 ],
                 speed: 200
             });
@@ -183,19 +191,19 @@ var startDemo;
                 transforms:[
                     {type: 'opacity', configs: {opacity: 1.0 }}
                 ],
-                speed: 500
+                speed: 250
             });
 
             transformPlaylist.push({
                 transforms:[{type: 'shrink'}],
                 delay: 0,
-                speed: 200
+                speed: 300
             });
 
             transformPlaylist.push({
                 transforms:[{type: 'grow'}],
                 delay: 0,
-                speed: 100
+                speed: 200
             });
 
             transformPlaylist.push({

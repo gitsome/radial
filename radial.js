@@ -412,6 +412,10 @@ var Radial;
             return configs.custom(originalShapes, configs);
         },
 
+        pause: function (originalShapes, configs) {
+            return {};
+        },
+
         innerHalf: function (originalShapes, configs) {
             return {
                 inner: 0.0,

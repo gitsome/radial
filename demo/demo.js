@@ -114,7 +114,6 @@ var startDemo;
                 transforms:[
                     {type: 'innerHalf', groups: ['cool']},
                     {type: 'outerHalf', groups: ['warm']},
-                    {type: 'arcLength', configs: {arcLength: 110}},
                     {
                         type: 'custom',
                         groups: ['cool'],
@@ -125,7 +124,14 @@ var startDemo;
                         }
                     }
                 ],
-                speed: 800
+                speed: 600
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'arcLength', configs: {arcLength: 110}},
+                ],
+                speed: 600
             });
 
             transformPlaylist.push({
@@ -182,16 +188,42 @@ var startDemo;
 
             transformPlaylist.push({
                 transforms:[
-                    {type: 'opacity', configs: {opacity: 0.4 }}
+                    {type: 'gray', groups: ['cool']}
                 ],
+                delay: 0,
+                speed: 300
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'arcLength', configs: {arcLength: Math.round(Math.random()* 150) + 10 }}
+                ],
+                speed: 200
+            });
+
+
+            transformPlaylist.push({
+                transforms:[{type: 'pause'}],
                 speed: 200
             });
 
             transformPlaylist.push({
                 transforms:[
-                    {type: 'opacity', configs: {opacity: 1.0 }}
+                    {type: 'rotate', configs: {rotation: Math.round(Math.random()* 120) - 60 }},
                 ],
-                speed: 250
+                speed: 400
+            });
+
+            transformPlaylist.push({
+                transforms:[{type: 'pause'}],
+                speed: 200
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'restore'}
+                ],
+                speed: 700
             });
 
             transformPlaylist.push({
@@ -207,10 +239,27 @@ var startDemo;
             });
 
             transformPlaylist.push({
+                transforms:[{type: 'pause'}],
+                speed: 300
+            });
+
+            transformPlaylist.push({
                 transforms:[
-                    {type: 'restore'}
+                    {type: 'opacity', configs: {opacity: 0.4 }}
                 ],
-                speed: 700
+                speed: 200
+            });
+
+            transformPlaylist.push({
+                transforms:[
+                    {type: 'opacity', configs: {opacity: 1.0 }}
+                ],
+                speed: 250
+            });
+
+            transformPlaylist.push({
+                transforms:[{type: 'pause'}],
+                speed: 900
             });
 
             radial.transform(transformPlaylist, {});

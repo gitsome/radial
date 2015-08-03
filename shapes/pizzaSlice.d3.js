@@ -1,45 +1,30 @@
+var Radial = Radial || {};
+
 (function(){
 
+    var d3_svg_arcOffset = 0 * Math.PI/2;
+
+    var d3_svg_pizzaSliceInnerRadius = function (d) {
+        return d.innerRadius;
+    };
+
+    var d3_svg_pizzaSliceOuterRadius = function (d) {
+        return d.outerRadius;
+    };
+
+    var d3_svg_pizzaSliceAngle = function (d) {
+        return d.angle;
+    };
+
+    var d3_svg_pizzaSliceCornerPercent = function (d) {
+        return d.cornerPercent;
+    };
+
+    var d3_svg_pizzaSliceArcLength = function (d) {
+        return d.arcLength;
+    };
+
     d3.svg.pizzaSlice = function() {
-
-        var PathCreator = function() {
-
-            var self = this;
-
-            var path = "";
-
-            self.moveTo = function(pt) {
-                path = path + "M " + pt.x + " " + pt.y + " ";
-                return self;
-            };
-
-            self.lineTo = function(pt) {
-                path = path + "l " + pt.x + " " + pt.y + " ";
-                return self;
-            };
-
-            self.LineTo = function(pt) {
-                path = path + "L " + pt.x + " " + pt.y + " ";
-                return self;
-            };
-
-            self.cTo = function(cPt1, cPt2, target) {
-                path = path + "c " + cPt1.x + " " + cPt1.y + " " + cPt2.x + " " + cPt2.y + " " + target.x + " " + target.y + " ";
-                return self;
-            };
-
-            self.CTo = function(cPt1, cPt2, target) {
-                path = path + "C " + cPt1.x + " " + cPt1.y + " " + cPt2.x + " " + cPt2.y + " " + target.x + " " + target.y + " ";
-                return self;
-            };
-
-            self.path = function () {
-                return path;
-            };
-
-            return self;
-        };
-
 
         /*============ PRIVATE VARIABLES / METHODS ============*/
 
@@ -49,8 +34,6 @@
         var arcLength = d3_svg_pizzaSliceArcLength;
         var cornerPercent = d3_svg_pizzaSliceCornerPercent;
 
-        var toRadians = function (a) { return a * (Math.PI/180); };
-
         var percentFromAtoB = function (ptA, ptB, percent) {
             return {x:(ptB.x - ptA.x) * percent + ptA.x, y: (ptB.y - ptA.y) * percent + ptA.y};
         };
@@ -58,12 +41,12 @@
 
         /*============ CLASS DEFINITION ============*/
 
-        function pizzaSlice () {
+        var pizzaSlice = function () {
 
             var rI = innerRadius.apply(this, arguments);
             var rO = outerRadius.apply(this, arguments);
-            var a0 = toRadians(angle.apply(this, arguments)) + d3_svg_arcOffset;
-            var aLength = toRadians(arcLength.apply(this, arguments));
+            var a0 = Radial.toRadians(angle.apply(this, arguments)) + d3_svg_arcOffset;
+            var aLength = Radial.toRadians(arcLength.apply(this, arguments));
             var cornerP = cornerPercent.apply(this, arguments);
 
             var B = {
@@ -90,11 +73,11 @@
             CkA = percentFromAtoB(C, A, cornerP);
             CkB = percentFromAtoB(C, B, cornerP);
 
-            var slicePath = new PathCreator();
+            var slicePath = new Radial.PathCreator();
             slicePath.moveTo(BkC).CTo(B, B, BkA).LineTo(AkB).CTo(A, A, AkC).LineTo(CkA).CTo(C, C, CkB).LineTo(BkC);
 
             return  slicePath.path();
-        }
+        };
 
 
         /*============ CLASS METHODS ============*/
@@ -131,27 +114,5 @@
 
         return pizzaSlice;
     };
-
-    var d3_svg_arcOffset = 0 * Math.PI/2;
-
-    function d3_svg_pizzaSliceInnerRadius(d) {
-        return d.innerRadius;
-    }
-
-    function d3_svg_pizzaSliceOuterRadius(d) {
-        return d.outerRadius;
-    }
-
-    function d3_svg_pizzaSliceAngle(d) {
-        return d.angle;
-    }
-
-    function d3_svg_pizzaSliceCornerPercent(d) {
-        return d.cornerPercent;
-    }
-
-    function d3_svg_pizzaSliceArcLength(d) {
-        return d.arcLength;
-    }
 
 }());

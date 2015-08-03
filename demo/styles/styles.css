@@ -1,5 +1,6 @@
 .target {
     width: 300px;
     height: 300px;
+    float: left;
     background: rgba(0,0,0, 0.05);
 }

@@ -538,5 +538,63 @@ var Radial;
         }
     };
 
+    Radial.PathCreator = function() {
+
+        var self = this;
+
+        var path = "";
+
+        self.moveTo = function(pt) {
+            path = path + "M " + pt.x + " " + pt.y + " ";
+            return self;
+        };
+
+        self.lineTo = function(pt) {
+            path = path + "l " + pt.x + " " + pt.y + " ";
+            return self;
+        };
+
+        self.LineTo = function(pt) {
+            path = path + "L " + pt.x + " " + pt.y + " ";
+            return self;
+        };
+
+        self.cTo = function(cPt1, cPt2, target) {
+            path = path + "c " + cPt1.x + " " + cPt1.y + " " + cPt2.x + " " + cPt2.y + " " + target.x + " " + target.y + " ";
+            return self;
+        };
+
+        self.CTo = function(cPt1, cPt2, target) {
+            path = path + "C " + cPt1.x + " " + cPt1.y + " " + cPt2.x + " " + cPt2.y + " " + target.x + " " + target.y + " ";
+            return self;
+        };
+
+        self.path = function () {
+            return path;
+        };
+
+        return self;
+    };
+
+    Radial.shapes = {
+        arc: function (options) {
+            return d3.svg.arc()
+            .innerRadius(function(d){return d.innerRadius;})
+            .outerRadius(function(d){return d.outerRadius;})
+            .startAngle(function(d){return -Radial.toRadians(d.angle + d.arcLength /2 - 90);})
+            .endAngle(function(d){return -Radial.toRadians(d.angle - d.arcLength /2 - 90);})
+            .cornerRadius(function(d){return options.cornerRadius || 0});
+        },
+        pizzaSlice: function (options) {
+            return d3.svg.pizzaSlice()
+                .innerRadius(function(d){return d.innerRadius;})
+                .outerRadius(function(d){return d.outerRadius;})
+                .angle(function(d){return d.angle;})
+                .cornerPercent(function(d){return options.cornerPercent || 0.3;});
+        }
+    };
+
+    Radial.toRadians = function (a) { return a * (Math.PI/180); };
+
 
 })();

@@ -3,6 +3,8 @@ var startDemo;
 
 var colorfulPizzaShapes = colorfulPizzaShapes || [];
 var colorfulArcShapes = colorfulArcShapes || [];
+var canvasLogoShapes = canvasLogoShapes || [];
+
 var colorfulTransforms = colorfulTransforms || [];
 
 (function () {
@@ -11,6 +13,7 @@ var colorfulTransforms = colorfulTransforms || [];
 
         setupDemoOne();
         setupDemoTwo();
+        setupDemoThree();
     };
 
     function setupDemoOne () {
@@ -29,6 +32,17 @@ var colorfulTransforms = colorfulTransforms || [];
         var container = $('.target2');
 
         var radial = new Radial(container, colorfulPizzaShapes, {});
+
+        container.click(function () {
+            radial.transform(colorfulTransforms, {});
+        });
+    }
+
+    function setupDemoThree () {
+
+        var container = $('.target3');
+
+        var radial = new Radial(container, canvasLogoShapes, {});
 
         container.click(function () {
             radial.transform(colorfulTransforms, {});

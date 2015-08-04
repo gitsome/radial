@@ -544,7 +544,17 @@ var Radial;
 
         var path = "";
 
+        self.close = function () {
+            path = path + 'Z';
+            return self;
+        },
+
         self.moveTo = function(pt) {
+            path = path + "m " + pt.x + " " + pt.y + " ";
+            return self;
+        };
+
+        self.MoveTo = function(pt) {
             path = path + "M " + pt.x + " " + pt.y + " ";
             return self;
         };
@@ -569,6 +579,16 @@ var Radial;
             return self;
         };
 
+        self.aTo = function(focus, angle, large, sweep, target) {
+            path = path + "a" + focus.x + "," + focus.y + " " + angle + " " + large + "," + sweep + " " + target.x + "," + target.y + " ";
+            return self;
+        };
+
+        self.ATo = function(focus, angle, large, sweep, target) {
+            path = path + "A" + focus.x + "," + focus.y + " " + angle + " " + large + "," + sweep + " " + target.x + "," + target.y + " ";
+            return self;
+        };
+
         self.path = function () {
             return path;
         };
@@ -587,14 +607,32 @@ var Radial;
         },
         pizzaSlice: function (options) {
             return d3.svg.pizzaSlice()
-                .innerRadius(function(d){return d.innerRadius;})
-                .outerRadius(function(d){return d.outerRadius;})
-                .angle(function(d){return d.angle;})
-                .cornerPercent(function(d){return options.cornerPercent || 0.3;});
+                .cornerPercent(function(d){return options.cornerPercent || 0.5;});
+        },
+        halfCircleIn: function (options) {
+            return d3.svg.halfCircleIn();
+        },
+        circle: function (options) {
+            return d3.svg.circle();
         }
     };
 
     Radial.toRadians = function (a) { return a * (Math.PI/180); };
+
+    Radial.distance = function (p, q) {
+        return Math.sqrt((p.x - q.x) * (p.x - q.x) + (p.y - q.y) * (p.y - q.y));
+    };
+
+    Radial.circleFromThreePoints = function (A, B, C) {
+        var m_r = (B.y-A.y)/(B.x - A.x);
+        var m_t = (B.y-C.y)/(B.x - C.x);
+
+        var center = {
+            x: (m_r * m_t * (C.y - A.y) + m_r * (B.x + C.x) - m_t * (A.x + B.x)) / (2 * (m_r - m_t))
+        };
+        center.y = (-1 / m_r) * (center.x - (A.x + B.x)/2 ) + (A.y + B.y)/2;
+        return {center: center, radius: Radial.distance(center, B)};
+    };
 
 
 })();

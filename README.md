@@ -10,8 +10,8 @@ A Radial shape is an SVG entity that generates an svg path who's inputs are the 
 Every shape is required to use and respond to changes in these parameters to create consistent renderings and animations across all shapes.
 
 # Dependecies
--jQuery
--D3
+- jQuery
+- D3
 
 # Radial shapes
 Radial ships with several shape extensions on the D3 library

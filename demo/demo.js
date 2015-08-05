@@ -3,9 +3,16 @@ var startDemo;
 
 var colorfulPizzaShapes = colorfulPizzaShapes || [];
 var colorfulArcShapes = colorfulArcShapes || [];
+
 var canvasLogoShapes = canvasLogoShapes || [];
+var canvasLogoShapesAlt = canvasLogoShapesAlt || [];
+
+var ubuntuShapes = ubuntuShapes || [];
+var ubuntuShapesAlt = ubuntuShapesAlt || [];
 
 var colorfulTransforms = colorfulTransforms || [];
+var canvasTransforms = canvasTransforms || [];
+var ubuntuTransforms = ubuntuTransforms || [];
 
 (function () {
 
@@ -14,6 +21,9 @@ var colorfulTransforms = colorfulTransforms || [];
         setupDemoOne();
         setupDemoTwo();
         setupDemoThree();
+        setupDemoFour();
+        setupDemoFive();
+        setupDemoSix();
     };
 
     function setupDemoOne () {
@@ -42,10 +52,43 @@ var colorfulTransforms = colorfulTransforms || [];
 
         var container = $('.target3');
 
+        var radial = new Radial(container, ubuntuShapes, {});
+
+        container.click(function () {
+            radial.transform(ubuntuTransforms, {});
+        });
+    }
+
+    function setupDemoFour () {
+
+        var container = $('.target4');
+
+        var radial = new Radial(container, ubuntuShapesAlt, {});
+
+        container.click(function () {
+            radial.transform(ubuntuTransforms, {});
+        });
+    }
+
+    function setupDemoFive () {
+
+        var container = $('.target5');
+
         var radial = new Radial(container, canvasLogoShapes, {});
 
         container.click(function () {
-            radial.transform(colorfulTransforms, {});
+            radial.transform(canvasTransforms, {});
+        });
+    }
+
+    function setupDemoSix () {
+
+        var container = $('.target6');
+
+        var radial = new Radial(container, canvasLogoShapesAlt, {});
+
+        container.click(function () {
+            radial.transform(canvasTransforms, {});
         });
     }
 

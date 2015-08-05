@@ -150,8 +150,8 @@ var Radial;
         };
 
         var normalizeAngle = function (angle) {
-            while (angle < 0) angle = angle + 360;
-            while (angle >= 360) angle = angle - 360;
+            // while (angle < 0) angle = angle + 360;
+            // while (angle >= 360) angle = angle - 360;
             return angle;
         };
 

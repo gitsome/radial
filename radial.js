@@ -15,10 +15,10 @@ var Radial;
     /*============ CLASS DEFINITION ============*/
 
     var options_default = {
-        hover: {},
-        click: {},
-        onHover: $.noop,
-        onClick: $.noop
+        padding: 1,
+        mouseover: $.noop,
+        mouseout: $.noop,
+        click: $.noop
     };
 
     Radial = function (container, shapes, options_in) {
@@ -53,7 +53,7 @@ var Radial;
                 options.h = $(container).height();
             }
 
-            layout_radius = options.h / 2;
+            layout_radius = (options.h - 2 * options.padding) / 2;
             layout_origin = {x: options.w/2, y: options.h/2};
         };
 
@@ -98,7 +98,7 @@ var Radial;
 
                 var shapei = $.extend({}, shapeData[i]);
 
-                var isPartOfGroup = transform.configs.groups && shapei.group && transform.configs.groups.indexOf(shapei.group) !== -1;
+                var isPartOfGroup = transform.configs.groups && shapei.group !== undefined && transform.configs.groups.indexOf(shapei.group) !== -1;
                 var isPartOfShapes = transform.configs.shapes && transform.configs.shapes.indexOf(shapei.id) !== -1;
 
                 var noClassification = !transform.configs.groups && !transform.configs.shapes;
@@ -175,8 +175,6 @@ var Radial;
                 }
 
                 draw(currentShapes, {speed: nextTransform.speed, delay: nextTransform.delay});
-
-                // here is where repeat logic would go
             }
         };
 
@@ -196,7 +194,7 @@ var Radial;
             transformConfigs_in = transformConfigs_in || {};
 
             var transformConfigs = $.extend({
-                speed: 600,
+                speed: 0,
                 delay: 0
             }, transformConfigs_in);
 
@@ -228,7 +226,16 @@ var Radial;
                         .style("stroke", function(d) { return d.stroke; })
                         .style("stroke-width", function(d) { return d.strokeWidth; })
                         .attr("d", function (d) {return d.path(d);})
-                        .attr("transform", "translate("+ layout_origin.x + "," + layout_origin.y +")");
+                        .attr("transform", "translate("+ layout_origin.x + "," + layout_origin.y +")")
+                    .on("mouseover", function(d) {
+                        options.mouseover(d, this);
+                    })
+                    .on("mouseout",  function(d) {
+                        options.mouseout(d, this);
+                    })
+                    .on("click",  function(d) {
+                        options.click(d, this);
+                    });
 
 
             /*============ SLICES UPDATE ============*/
@@ -317,7 +324,7 @@ var Radial;
 
                     for(var k=0; k < shapes.length; k++) {
 
-                        isPartOfGroup = transform.groups && shapes[k].group && transform.groups.indexOf(shapes[k].group) !== -1;
+                        isPartOfGroup = transform.groups && shapes[k].group !== undefined && transform.groups.indexOf(shapes[k].group) !== -1;
                         isPartOfShapes = transform.shapes && transform.shapes.indexOf(shapes[k].id) !== -1;
 
                         noClassification = !transform.groups && !transform.shapes;

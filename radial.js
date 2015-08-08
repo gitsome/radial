@@ -18,6 +18,8 @@ var Radial;
         padding: 1,
         mouseover: $.noop,
         mouseout: $.noop,
+        mousedown: $.noop,
+        mouseup: $.noop,
         click: $.noop
     };
 
@@ -235,6 +237,12 @@ var Radial;
                     })
                     .on("click",  function(d) {
                         options.click(d, this);
+                    })
+                    .on("mousedown",  function(d) {
+                        options.mousedown(d, this);
+                    })
+                    .on("mouseup",  function(d) {
+                        options.mouseup(d, this);
                     });
 
 
@@ -605,12 +613,17 @@ var Radial;
 
     Radial.shapes = {
         arc: function (options) {
-            return d3.svg.arc()
+            var arc = d3.svg.arc()
             .innerRadius(function(d){return d.innerRadius;})
             .outerRadius(function(d){return d.outerRadius;})
             .startAngle(function(d){return -Radial.toRadians(d.angle + d.arcLength /2 - 90);})
-            .endAngle(function(d){return -Radial.toRadians(d.angle - d.arcLength /2 - 90);})
-            .cornerRadius(function(d){return options.cornerRadius || 0});
+            .endAngle(function(d){return -Radial.toRadians(d.angle - d.arcLength /2 - 90);});
+
+            if(arc.cornerRadius) {
+                arc.cornerRadius(function(d){return options.cornerRadius || 0});
+            }
+
+            return arc;
         },
         pizzaSlice: function (options) {
             return d3.svg.pizzaSlice()

@@ -52,7 +52,7 @@ var ubuntuTransforms = ubuntuTransforms || [];
 
         var container = $('.target3');
 
-        var radial = new Radial(container, ubuntuShapes, {});
+        var radial = new Radial(container, ubuntuShapes, {padding: 5});
 
         container.click(function () {
             radial.transform(ubuntuTransforms, {});
@@ -63,7 +63,7 @@ var ubuntuTransforms = ubuntuTransforms || [];
 
         var container = $('.target4');
 
-        var radial = new Radial(container, ubuntuShapesAlt, {});
+        var radial = new Radial(container, ubuntuShapesAlt, {padding: 5});
 
         container.click(function () {
             radial.transform(ubuntuTransforms, {});

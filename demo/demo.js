@@ -14,16 +14,24 @@ var colorfulTransforms = colorfulTransforms || [];
 var canvasTransforms = canvasTransforms || [];
 var ubuntuTransforms = ubuntuTransforms || [];
 
+var falcorTransforms = falcorTransforms || [];
+var falcorTransformsAlt = falcorTransformsAlt || [];
+
 (function () {
 
     startDemo = function () {
 
         setupDemoOne();
         setupDemoTwo();
+
         setupDemoThree();
         setupDemoFour();
+
         setupDemoFive();
         setupDemoSix();
+
+        setupDemoSeven();
+        setupDemoEight();
     };
 
     function setupDemoOne () {
@@ -89,6 +97,28 @@ var ubuntuTransforms = ubuntuTransforms || [];
 
         container.click(function () {
             radial.transform(canvasTransforms, {});
+        });
+    }
+
+    function setupDemoSeven () {
+
+        var container = $('.target7');
+
+        var radial = new Radial(container, falcorShapes, {});
+
+        container.click(function () {
+            radial.transform(falcorTransforms, {});
+        });
+    }
+
+    function setupDemoEight () {
+
+        var container = $('.target8');
+
+        var radial = new Radial(container, falcorShapes, {});
+
+        container.click(function () {
+            radial.transform(falcorTransformsAlt, {});
         });
     }
 

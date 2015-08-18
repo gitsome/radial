@@ -634,6 +634,9 @@ var Radial;
         },
         circle: function (options) {
             return d3.svg.circle();
+        },
+        chevron: function (options) {
+            return d3.svg.chevron(options);
         }
     };
 

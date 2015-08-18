@@ -6,3 +6,7 @@
     float: left;
     background: rgba(0,0,0, 0.05);
 }
+
+.target7, .target8 {
+    background: #444;
+}

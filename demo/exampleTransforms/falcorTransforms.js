@@ -68,6 +68,60 @@ var falcorTransforms = [];
     });
 
     falcorTransforms.push({
+        transforms:[{
+            type: 'custom',
+            shapes: ['green'],
+            configs:{
+                custom: function (d) {
+                    return {
+                        inner: 0.0
+                    }
+                }
+            }
+        }],
+        delay: 0,
+        speed: 300
+    });
+
+    falcorTransforms.push({
+        transforms:[{type: 'pause'}],
+        delay: 0,
+        speed: 400
+    });
+
+    falcorTransforms.push({
+        transforms:[{
+            type: 'custom',
+            configs:{
+                custom: function (d) {
+                    return {
+                        inner: 0.0
+                    }
+                }
+            }
+        }],
+        delay: 0,
+        speed: 300
+    });
+
+    falcorTransforms.push({
+        transforms:[{type: 'pause'}],
+        delay: 0,
+        speed: 400
+    });
+
+    falcorTransforms.push({
+        transforms:[{
+            type: 'restore',
+            configs:{
+                inner: true
+            }
+        }],
+        delay: 0,
+        speed: 300
+    });
+
+    falcorTransforms.push({
         transforms:[{type: 'shrink'}],
         delay: 0,
         speed: 300

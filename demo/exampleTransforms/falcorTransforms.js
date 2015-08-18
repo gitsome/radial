@@ -117,8 +117,8 @@ var falcorTransforms = [];
                 inner: true
             }
         }],
-        delay: 0,
-        speed: 300
+        delay: Radial.DELAY_BY_INDEX,
+        speed: 600
     });
 
     falcorTransforms.push({

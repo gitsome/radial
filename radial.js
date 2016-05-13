@@ -637,6 +637,9 @@ var Radial;
         },
         chevron: function (options) {
             return d3.svg.chevron(options);
+        },
+        trapezoid: function (options) {
+            return d3.svg.trapezoid(options);
         }
     };
 

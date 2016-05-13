@@ -32,6 +32,8 @@ var falcorTransformsAlt = falcorTransformsAlt || [];
 
         setupDemoSeven();
         setupDemoEight();
+
+        setupDemoNine();
     };
 
     function setupDemoOne () {
@@ -119,6 +121,17 @@ var falcorTransformsAlt = falcorTransformsAlt || [];
 
         container.click(function () {
             radial.transform(falcorTransformsAlt, {});
+        });
+    }
+
+    function setupDemoNine () {
+
+        var container = $('.target9');
+
+        var radial = new Radial(container, exaptiveShapes, {});
+
+        container.click(function () {
+            radial.transform(exaptiveTransforms, {});
         });
     }
 

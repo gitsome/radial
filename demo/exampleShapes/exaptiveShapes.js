@@ -7,8 +7,8 @@ var exaptiveShapes;
     var trapezoid = Radial.shapes.trapezoid({});
     var arc = Radial.shapes.arc({cornerRadius: 0});
 
-    var TRAP_INNER = 0.35;
-    var TRAP_OUTER = 0.65;
+    var TRAP_INNER = 0.4;
+    var TRAP_OUTER = 0.68;
 
     var ARC_INNER = 0.7;
     var ARC_OUTER = 1.0;

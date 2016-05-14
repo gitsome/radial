@@ -1,6 +1,8 @@
 # Radial
 Radial is a library that is used to render and animate radial based svg shapes. It uses D3 for animation and interprolation of SVG paths.
 
+[See Live Demo](http://test.grasptheory.com/sites/radial/demo/index.html)
+
 A Radial shape is an SVG entity that generates an svg path who's inputs are the following:
 - angle : the angle (in degrees), between 0-360 that determines the base angle to draw from
 - arcLength : the arcLength (in degrees) this shape should take up of 360 degrees
@@ -15,5 +17,3 @@ Every shape is required to use and respond to changes in these parameters to cre
 
 # Radial shapes
 Radial ships with several shape extensions on the D3 library
-
-

@@ -20,7 +20,8 @@ var ephoxTransforms = [];
 
     ephoxTransforms.push({
         transforms:[
-            {type: 'rotate', configs: {rotation: 360}}
+            {type: 'rotate', configs: {rotation: 360}},
+            {type: 'outerHalf', groups: ['small', 'large']}
         ],
         speed: 600
     });
@@ -35,9 +36,9 @@ var ephoxTransforms = [];
 
     ephoxTransforms.push({
         transforms:[
-            {type: 'rotate', configs: {rotation: 360}}
+            {type: 'rotate', configs: {rotation: 360}},
+            {type: 'innerHalf', groups: ['small', 'large']}
         ],
-        delay: Radial.DELAY_BY_INDEX,
         speed: 600
     });
 

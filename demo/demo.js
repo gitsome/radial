@@ -17,6 +17,9 @@ var ubuntuTransforms = ubuntuTransforms || [];
 var falcorTransforms = falcorTransforms || [];
 var falcorTransformsAlt = falcorTransformsAlt || [];
 
+var ephoxShapes = ephoxShapes || [];
+var ephoxTransforms = ephoxTransforms || [];
+
 (function () {
 
     startDemo = function () {
@@ -34,6 +37,7 @@ var falcorTransformsAlt = falcorTransformsAlt || [];
         setupDemoEight();
 
         setupDemoNine();
+        setupDemoTen();
     };
 
     function setupDemoOne () {
@@ -132,6 +136,17 @@ var falcorTransformsAlt = falcorTransformsAlt || [];
 
         container.click(function () {
             radial.transform(exaptiveTransforms, {});
+        });
+    }
+
+    function setupDemoTen () {
+
+        var container = $('.target10');
+
+        var radial = new Radial(container, ephoxShapes, {});
+
+        container.click(function () {
+            radial.transform(ephoxTransforms, {});
         });
     }
 

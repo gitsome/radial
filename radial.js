@@ -635,6 +635,9 @@ var Radial;
         circle: function (options) {
             return d3.svg.circle();
         },
+        tearDrop: function (options) {
+            return d3.svg.tearDrop();
+        },
         chevron: function (options) {
             return d3.svg.chevron(options);
         },
